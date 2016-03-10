@@ -301,8 +301,14 @@ abstract class ConstrainedObject extends BasicObject
         if ($this->hasAttribute($name)) {
             $classDefinition = $this->getAttributeClass($name);
 
-            if ($classDefinition && !($classDefinition->isNullable() === true && is_null($value))) {
+            if ($classDefinition &&
+                ! ($classDefinition->isNullable() === true && is_null($value))
+            ) {
                 $class = $classDefinition->getClass();
+
+                if (is_object($value) && (get_class($value))) {
+                    return ($this->attribute[$name] = $value);
+                }
 
                 return ($this->attribute[$name] = new $class($value));
             } else {
