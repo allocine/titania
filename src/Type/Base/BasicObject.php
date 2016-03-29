@@ -119,6 +119,20 @@ abstract class BasicObject implements
     }
 
     /**
+     * Sets the basic object from some data (public alias for setFromSomeData)
+     *
+     * @param mixed $data Whatever we can use to create the basic object
+     *
+     * @throws \Exception
+     *
+     * @return void
+     */
+    public function setFrom($data)
+    {
+        $this->setFromSomeData($data);
+    }
+
+    /**
      * Sets the basic object from some data
      *
      * @param mixed $data Whatever we can use to create the basic object
