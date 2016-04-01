@@ -306,7 +306,7 @@ abstract class ConstrainedObject extends BasicObject
             ) {
                 $class = $classDefinition->getClass();
 
-                if (is_object($value) && (get_class($value))) {
+                if (is_object($value) && ($class === get_class($value))) {
                     return ($this->attribute[$name] = $value);
                 }
 
