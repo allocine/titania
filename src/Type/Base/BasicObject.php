@@ -206,7 +206,7 @@ abstract class BasicObject implements
      */
     public function toSimpleObject($compress = true)
     {
-        return (object) $this->attribute;
+        return (object) $this->toArray();
     }
 
     /**
@@ -216,7 +216,17 @@ abstract class BasicObject implements
      */
     public function toArray()
     {
-        return $this->attribute;
+        $return = [];
+
+        foreach ($this->attribute as $key => $value) {
+            if (is_object($value) && ($value instanceof BasicObject)) {
+                $return[$key] = $value->toArray();
+            } else {
+                $return[$key] = $value;
+            }
+        }
+        
+        return $return;
     }
 
     /**
