@@ -18,7 +18,7 @@ namespace Allocine\Titania\Type\Base;
  *
  * @package    Allocine\Titania
  * @subpackage Type
- * @author     Yannick Le Guédart
+ * @author     Yannick Le Guédart, ESCRICH Jimmy
  */
 
 abstract class BasicObject implements
@@ -41,10 +41,12 @@ abstract class BasicObject implements
      * Whatever the input, we try to construct the basic object
      *
      * @param mixed $data Whatever we can use to create the basic object
+     *
+     * @throws \Exception
      */
     public function __construct($data = null)
     {
-        if (! is_null($data)) {
+        if (!is_null($data)) {
             $this->setFromSomeData($data);
         }
     }
@@ -88,7 +90,14 @@ abstract class BasicObject implements
      */
     public function __call($name, array $args)
     {
-        // if we have a getter, it can only return an attribute
+        $function = $this->dashesToCamelCase($name, true);
+        if (method_exists($this, $function)) {
+            return call_user_func([$this, $function]);
+        }
+        $function = 'get' . $this->dashesToCamelCase($name);
+        if (method_exists($this, $function)) {
+            return call_user_func([$this, $function]);
+        }
 
         if ('get' === substr($name, 0, 3)) {
             return $this->getAttribute(lcfirst(substr($name, 3)));
@@ -100,7 +109,7 @@ abstract class BasicObject implements
 
         throw new \Exception(
             "Invalid method [$name] for basic object [" .
-            $this->getClass().
+            $this->getClass() .
             "]."
         );
     }
@@ -206,7 +215,7 @@ abstract class BasicObject implements
      */
     public function toSimpleObject($compress = true)
     {
-        return (object) $this->toArray();
+        return (object)$this->toArray();
     }
 
     /**
@@ -225,7 +234,7 @@ abstract class BasicObject implements
                 $return[$key] = $value;
             }
         }
-        
+
         return $return;
     }
 
@@ -337,6 +346,7 @@ abstract class BasicObject implements
      * Whether or not an offset exists
      *
      * @param string $offset An offset to check for
+     *
      * @return boolean
      */
     public function offsetExists($offset)
@@ -360,10 +370,31 @@ abstract class BasicObject implements
      * Returns the value at specified offset
      *
      * @param string $offset The offset to retrieve
+     *
      * @return mixed
      */
     public function offsetGet($offset)
     {
         return $this->getAttribute($offset);
+    }
+
+    /**
+     * @param string $string
+     * @param bool   $capitalizeFirstCharacter
+     * @param string $separator
+     *
+     * @return mixed|string
+     */
+    private function dashesToCamelCase(
+        $string,
+        $capitalizeFirstCharacter = false,
+        $separator = '_'
+    ) {
+        $str = str_replace($separator, '', ucwords($string, $separator));
+        if (!$capitalizeFirstCharacter) {
+            $str = lcfirst($str);
+        }
+
+        return $str;
     }
 }
