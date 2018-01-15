@@ -235,11 +235,15 @@ class BasicObjectTest extends \PHPUnit_Framework_TestCase
     public function testCall()
     {
         $b = new Base(['key1' => 1, 'key2' => 2]);
+        $b->hasKey1 = function () {
+            return $this->attribute['key1'];
+        };
 
         /** getter */
 
         $this->assertEquals(1, $b->getKey1());
         $this->assertEquals(2, $b->getKey2());
+        $this->assertEquals(2, $b->has_key1);
 
         /** setter */
 
