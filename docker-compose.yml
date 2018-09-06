@@ -1,0 +1,12 @@
+version: '2.4'
+
+services:
+  test:
+    image: eu.gcr.io/ac-registry/base:php7.1-node8-dev-2018.08.08
+    entrypoint: /scripts/toolbox.sh
+    volumes:
+      - .:/app
+      - ${COMPOSER_HOME:-~/workspace/.composer}:/tmp/.composer
+    environment:
+      USER_ID: ${VOLUME_USER_ID:-1000}
+      COMPOSER_HOME: /tmp/.composer
