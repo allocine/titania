@@ -28,5 +28,12 @@
             "Allocine\\Titania\\": "src/",
             "Tests\\Titania\\": "tests/"
         }
+    },
+    "config": {
+        "bin-dir": "bin",
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
     }
 }
