@@ -240,9 +240,9 @@ abstract class ObjectCollection
                 $items[] = $object->{$field};
             }
 
-            $preImplode[] = implode($items, $innerGlue);
+            $preImplode[] = implode($innerGlue, $items);
         }
 
-        return implode($preImplode, $glue);
+        return implode($glue, $preImplode);
     }
 }

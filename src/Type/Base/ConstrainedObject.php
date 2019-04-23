@@ -209,6 +209,8 @@ abstract class ConstrainedObject extends BasicObject
             if (!$compress) {
                 if ($v instanceof BasicObject) {
                     $o->{$k} = $v->toSimpleObject($compress);
+                } elseif ($v instanceof \DateTimeInterface) {
+                    $o->{$k} = $v->format(\DATE_ATOM);
                 } else {
                     $o->{$k} = $v;
                 }
@@ -217,6 +219,8 @@ abstract class ConstrainedObject extends BasicObject
                 if ($v != $this->attributeDefault[$k]) {
                     if ($v instanceof BasicObject) {
                         $o->{$k} = $v->toSimpleObject($compress);
+                    } elseif ($v instanceof \DateTimeInterface) {
+                        $o->{$k} = $v->format(\DATE_ATOM);
                     } else {
                         $o->{$k} = $v;
                     }

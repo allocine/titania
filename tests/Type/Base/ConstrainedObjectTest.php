@@ -536,11 +536,15 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
     public function testNonNullableObject()
     {
         $a = new NotNullableConstraint();
+        $b = new NotNullableConstraint();
 
         $this->assertNull($a->date);
 
         $a->date = 'now';
 
         $this->assertInstanceOf('\Datetime', $a->date);
+        $b->setFromSomeData($a->toSimpleObject());
+
+        $this->assertEquals($a->date->getTimestamp(), $b->date->getTimestamp());
     }
 }
