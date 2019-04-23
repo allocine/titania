@@ -225,7 +225,7 @@ abstract class BasicObject implements
                 $return[$key] = $value;
             }
         }
-        
+
         return $return;
     }
 
