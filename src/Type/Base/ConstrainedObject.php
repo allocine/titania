@@ -142,11 +142,11 @@ abstract class ConstrainedObject extends BasicObject
                     $class = $classDefinition[$k]->getClass();
 
                     $this->attributeDefault[$k] = new $class($v);
+                    $this->attribute[$k] = clone($this->attributeDefault[$k]);
                 } else {
                     $this->attributeDefault[$k] = $v;
+                    $this->attribute[$k] = $this->attributeDefault[$k];
                 }
-
-                $this->attribute[$k] = $this->attributeDefault[$k];
             }
 
             $this->attributeAlias = static::getAttributeAliasDefinition();
@@ -172,15 +172,21 @@ abstract class ConstrainedObject extends BasicObject
                         $class = $pcClassDefinition[$k];
 
                         $this->attributeDefault[$k] = new $class($v);
+                        $this->attribute[$k] = clone($this->attributeDefault[$k]);
                     } else {
                         $this->attributeDefault[$k] = $v;
+                        $this->attribute[$k]= $this->attributeDefault[$k];
                     }
-
-                    $this->attribute[$k]= $this->attributeDefault[$k];
                 }
 
-                $this->attributeAlias = array_merge($pc::getAttributeAliasDefinition(), $this->attributeAlias);
-                $this->attributeClass = array_merge($pcClassDefinition, $this->attributeClass);
+                $this->attributeAlias = array_merge(
+                    $pc::getAttributeAliasDefinition(),
+                    $this->attributeAlias
+                );
+                $this->attributeClass = array_merge(
+                    $pcClassDefinition,
+                    $this->attributeClass
+                );
             }
 
             $this->initDone = true;
@@ -214,7 +220,6 @@ abstract class ConstrainedObject extends BasicObject
                 } else {
                     $o->{$k} = $v;
                 }
-
             } else {
                 if ($v != $this->attributeDefault[$k]) {
                     if ($v instanceof BasicObject) {
@@ -310,10 +315,19 @@ abstract class ConstrainedObject extends BasicObject
             ) {
                 $class = $classDefinition->getClass();
 
-                if (is_object($value) && ($class === get_class($value))) {
-                    return ($this->attribute[$name] = $value);
+                if (is_object($value)) {
+                    if ($class === '\\' . get_class($value)) {
+                        return ($this->attribute[$name] = $value);
+                    } else {
+                        throw new \Exception(sprintf(
+                            "Invalid class [%s] for attribute [%s] of " .
+                                "constrained object [%s]",
+                            get_class($value),
+                            $name,
+                            $this->getClass()
+                        ));
+                    }
                 }
-
                 return ($this->attribute[$name] = new $class($value));
             } else {
                 return ($this->attribute[$name] = $value);
