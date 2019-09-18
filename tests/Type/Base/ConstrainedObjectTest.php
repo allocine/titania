@@ -118,6 +118,7 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
     public function testSetAttributeSubClass()
     {
         $b = new ExtendedConstrainedWithSubclass();
+        $c = new ExtendedConstrainedWithSubclass();
 
         $this->assertEquals(
             new ConstrainedNoAlias(),
@@ -546,5 +547,36 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
         $b->setFromSomeData($a->toSimpleObject());
 
         $this->assertEquals($a->date->getTimestamp(), $b->date->getTimestamp());
+    }
+
+    public function testClone()
+    {
+
+        /** Test with subclass attribute */
+
+        $b = new ExtendedConstrainedWithSubclass([
+            'keyA' => [
+                'key1' => 'COIN',
+                'key2' => 'PAN'
+            ]
+        ]);
+
+        // clone from $b
+
+        $clone = clone($b);
+
+        // copy from $b converted array
+
+        $copy = new ExtendedConstrainedWithSubclass($b->toArray());
+
+        $this->assertEquals($b, $copy);
+        $this->assertNotSame($b, $copy);
+        $this->assertEquals($b, $clone);
+        $this->assertNotSame($b, $clone);
+
+        $this->assertEquals($b->keyA, $copy->keyA);
+        $this->assertNotSame($b->keyA, $copy->keyA);
+        $this->assertEquals($b->keyA, $clone->keyA);
+        $this->assertNotSame($b->keyA, $clone->keyA);
     }
 }

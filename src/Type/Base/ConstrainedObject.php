@@ -142,7 +142,7 @@ abstract class ConstrainedObject extends BasicObject
                     $class = $classDefinition[$k]->getClass();
 
                     $this->attributeDefault[$k] = new $class($v);
-                    $this->attribute[$k] = clone($this->attributeDefault[$k]);
+                    $this->attribute[$k] = new $class($v);
                 } else {
                     $this->attributeDefault[$k] = $v;
                     $this->attribute[$k] = $this->attributeDefault[$k];
@@ -172,7 +172,7 @@ abstract class ConstrainedObject extends BasicObject
                         $class = $pcClassDefinition[$k];
 
                         $this->attributeDefault[$k] = new $class($v);
-                        $this->attribute[$k] = clone($this->attributeDefault[$k]);
+                        $this->attribute[$k] = new $class($v);
                     } else {
                         $this->attributeDefault[$k] = $v;
                         $this->attribute[$k]= $this->attributeDefault[$k];
@@ -312,8 +312,13 @@ abstract class ConstrainedObject extends BasicObject
                 $class = $classDefinition->getClass();
 
                 if (is_object($value)) {
-                    if ($class === '\\' . get_class($value)) {
-                        return ($this->attribute[$name] = $value);
+                    if (
+                        ($class === '\\' . get_class($value)) ||
+                        ($class === get_class($value))
+                    ) {
+                        return ($this->attribute[$name] = clone($value));
+                    } elseif (get_class($value) === 'stdClass') {
+                        return ($this->attribute[$name] = new $class($value));
                     } else {
                         throw new \Exception(sprintf(
                             "Invalid class [%s] for attribute [%s] of " .
