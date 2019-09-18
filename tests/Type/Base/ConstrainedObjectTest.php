@@ -2,13 +2,14 @@
 
 namespace Tests\Titania\Type\Base;
 
+use PHPUnit\Framework\TestCase;
 use Tests\Titania\Fixtures\Constrained;
 use Tests\Titania\Fixtures\ConstrainedNoAlias;
 use Tests\Titania\Fixtures\ExtendedConstrained;
 use Tests\Titania\Fixtures\ExtendedConstrainedWithSubclass;
 use Tests\Titania\Fixtures\NotNullableConstraint;
 
-class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
+class ConstrainedObjectTest extends TestCase
 {
     /**
      * Test getAttribute method
@@ -22,8 +23,8 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $b->getAttribute('key2'));
         $this->assertNull($b->getAttribute('key1Alias'));
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             "Invalid attribute [key3] for constrained object [" .
             'Tests\Titania\Fixtures\Constrained' .
             "]."
@@ -46,8 +47,8 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(42, $b->getAttribute('key3'));
         $this->assertEquals(42, $b->getAttribute('key3Alias'));
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             "Invalid attribute [key4] for constrained object [" .
             'Tests\Titania\Fixtures\ExtendedConstrained' .
             "]."
@@ -101,8 +102,8 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
 
         /** Setting an invalid attribute */
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             "Invalid attribute [key3] for constrained object [" .
             'Tests\Titania\Fixtures\Constrained' .
             "]."
@@ -184,8 +185,8 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($b->getAlias('key2'));
         $this->assertEquals('key3Alias', $b->getAlias('key3'));
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             "Invalid attribute [key4] for constrained object [" .
             'Tests\Titania\Fixtures\ExtendedConstrained' .
             "]."
@@ -210,8 +211,8 @@ class ConstrainedObjectTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('key1', $b->resolveAlias('key1DoubleAlias'));
         $this->assertEquals('key3', $b->resolveAlias('key3Alias'));
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             "Invalid attributeAlias [key4] for constrained object [" .
             'Tests\Titania\Fixtures\ExtendedConstrained' .
             "]."
