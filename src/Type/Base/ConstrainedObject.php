@@ -333,15 +333,7 @@ abstract class ConstrainedObject extends BasicObject
                         ($class === get_class($value))
                     ) {
                         return ($this->attribute[$name] = $value);
-                    } else {
-                        throw new \Exception(sprintf(
-                            "Invalid class [%s] for attribute [%s] of " .
-                                "constrained object [%s]",
-                            get_class($value),
-                            $name,
-                            $this->getClass()
-                        ));
-                    }
+                    } 
                 }
                 return ($this->attribute[$name] = new $class($value));
             } else {
