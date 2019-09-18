@@ -2,9 +2,10 @@
 
 namespace Tests\Titania\Type\Base;
 
+use PHPUnit\Framework\TestCase;
 use Tests\Titania\Fixtures\ConstrainedCollection;
 
-class ObjectCollectionTest extends \PHPUnit_Framework_TestCase
+class ObjectCollectionTest extends TestCase
 {
     /**
      * Test format method

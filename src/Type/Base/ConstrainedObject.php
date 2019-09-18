@@ -310,21 +310,39 @@ abstract class ConstrainedObject extends BasicObject
         if ($this->hasAttribute($name)) {
             $classDefinition = $this->getAttributeClass($name);
 
-            if ($classDefinition &&
-                (! ($classDefinition->isNullable() === true) &&
-                is_null($value))
-            ) {
+            if ($classDefinition) {
+
                 $class = $classDefinition->getClass();
 
-                if (is_object($value)) {
-                    if ($class === '\\' . get_class($value)) {
-                        return ($this->attribute[$name] = $value);
+                if (is_null($value)) {
+                    if ($classDefinition->isNullable() === false) {
+                        throw new \Exception(sprintf(
+                            "Attribute attribute [%s] of constrained object [%s] can not be null",
+                            $name,
+                            $this->getClass()
+                        ));
+                    }
+                    else {
+                        return ($this->attribute[$name] = new $class());
                     }
                 }
-                return ($this->attribute[$name] = new $class($value));
-            } elseif ($classDefinition) {
-                $class = $classDefinition->getClass();
 
+                if (is_object($value)) {
+                    if (
+                        ($class === '\\' . get_class($value)) ||
+                        ($class === get_class($value))
+                    ) {
+                        return ($this->attribute[$name] = $value);
+                    } else {
+                        throw new \Exception(sprintf(
+                            "Invalid class [%s] for attribute [%s] of " .
+                                "constrained object [%s]",
+                            get_class($value),
+                            $name,
+                            $this->getClass()
+                        ));
+                    }
+                }
                 return ($this->attribute[$name] = new $class($value));
             } else {
                 return ($this->attribute[$name] = $value);

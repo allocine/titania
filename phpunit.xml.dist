@@ -8,13 +8,4 @@
             <directory>tests/</directory>
         </testsuite>
     </testsuites>
-
-    <filter processUncoveredFilesFromWhitelist="true">
-        <whitelist>
-            <directory suffix=".php">tests/</directory>
-            <exclude>
-                <directory>tests/</directory>
-            </exclude>
-        </whitelist>
-    </filter>
 </phpunit>

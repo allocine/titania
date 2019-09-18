@@ -2,10 +2,11 @@
 
 namespace Tests\Titania\Type\Base;
 
+use PHPUnit\Framework\TestCase;
 use Tests\Titania\Fixtures\Base;
 use Tests\Titania\Fixtures\ExtendedBase;
 
-class BasicObjectTest extends \PHPUnit_Framework_TestCase
+class BasicObjectTest extends TestCase
 {
     /**
      * Test getAttribute method
@@ -254,8 +255,8 @@ class BasicObjectTest extends \PHPUnit_Framework_TestCase
 
         /** Invalid __call */
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             "Invalid method [coin] for basic object [" .
             'Tests\Titania\Fixtures\Base' .
             "]."
@@ -314,8 +315,8 @@ class BasicObjectTest extends \PHPUnit_Framework_TestCase
 
         $b = new Base();
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             'Invalid $data for Tests\Titania\Fixtures\Base constructor'
         );
 
@@ -332,8 +333,8 @@ class BasicObjectTest extends \PHPUnit_Framework_TestCase
 
         $b = new Base();
 
-        $this->setExpectedException(
-            '\Exception',
+        $this->expectException('\Exception');
+        $this->expectExceptionMessage(
             'Invalid $data for Tests\Titania\Fixtures\Base constructor'
         );
 

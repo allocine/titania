@@ -316,11 +316,12 @@ abstract class BasicObject implements
      */
     public function __clone()
     {
-        $class = $this->getClass();
-
-        return new $class($this);
+        foreach ($this->attribute as $key => $value) {
+            if (is_object($value)) {
+                $this->$key = clone $value;
+            }
+        }
     }
-
 
     /**
      * Assigns a value to the specified offset
