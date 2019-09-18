@@ -318,7 +318,7 @@ abstract class BasicObject implements
     {
         foreach ($this->attribute as $key => $value) {
             if (is_object($value)) {
-                $this->$key = clone($value);
+                $this->$key = clone $value;
             }
         }
     }

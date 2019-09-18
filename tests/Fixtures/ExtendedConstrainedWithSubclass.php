@@ -10,7 +10,7 @@ class ExtendedConstrainedWithSubclass extends ConstrainedObject
     public static function getAttributeDefinition()
     {
         return [
-            'keyA' => null
+            'keyA' => []
         ];
     }
 

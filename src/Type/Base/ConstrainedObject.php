@@ -215,6 +215,8 @@ abstract class ConstrainedObject extends BasicObject
             if (!$compress) {
                 if ($v instanceof BasicObject) {
                     $o->{$k} = $v->toSimpleObject($compress);
+                } elseif ($v instanceof \DateTimeInterface) {
+                    $o->{$k} = $v->format(\DATE_ATOM);
                 } else {
                     $o->{$k} = $v;
                 }
@@ -222,6 +224,8 @@ abstract class ConstrainedObject extends BasicObject
                 if ($v != $this->attributeDefault[$k]) {
                     if ($v instanceof BasicObject) {
                         $o->{$k} = $v->toSimpleObject($compress);
+                    } elseif ($v instanceof \DateTimeInterface) {
+                        $o->{$k} = $v->format(\DATE_ATOM);
                     } else {
                         $o->{$k} = $v;
                     }
@@ -311,10 +315,7 @@ abstract class ConstrainedObject extends BasicObject
                 $class = $classDefinition->getClass();
 
                 if (is_null($value)) {
-                    if (
-                        ($classDefinition->isNullable() === false) &&
-                        is_null($value)
-                    ) {
+                    if ($classDefinition->isNullable() === false) {
                         throw new \Exception(sprintf(
                             "Attribute attribute [%s] of constrained object [%s] can not be null",
                             $name,
