@@ -142,7 +142,7 @@ abstract class ConstrainedObject extends BasicObject
                     $class = $classDefinition[$k]->getClass();
 
                     $this->attributeDefault[$k] = new $class($v);
-                    $this->attribute[$k] = new $class($v);
+                    $this->attribute[$k] = clone($this->attributeDefault[$k]);
                 } else {
                     $this->attributeDefault[$k] = $v;
                     $this->attribute[$k] = $this->attributeDefault[$k];
@@ -172,7 +172,7 @@ abstract class ConstrainedObject extends BasicObject
                         $class = $pcClassDefinition[$k];
 
                         $this->attributeDefault[$k] = new $class($v);
-                        $this->attribute[$k] = new $class($v);
+                        $this->attribute[$k] = clone($this->attributeDefault[$k]);
                     } else {
                         $this->attributeDefault[$k] = $v;
                         $this->attribute[$k]= $this->attributeDefault[$k];
@@ -307,7 +307,8 @@ abstract class ConstrainedObject extends BasicObject
             $classDefinition = $this->getAttributeClass($name);
 
             if ($classDefinition &&
-                ! ($classDefinition->isNullable() === true && is_null($value))
+                (! ($classDefinition->isNullable() === true) &&
+                is_null($value))
             ) {
                 $class = $classDefinition->getClass();
 
