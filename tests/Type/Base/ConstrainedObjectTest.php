@@ -119,11 +119,10 @@ class ConstrainedObjectTest extends TestCase
     public function testSetAttributeSubClass()
     {
         $b = new ExtendedConstrainedWithSubclass();
-        $c = new ExtendedConstrainedWithSubclass();
 
         $this->assertEquals(
             new ConstrainedNoAlias(),
-            $b->setAttribute('keyA', null)
+            $b->setAttribute('keyA', '{}')
         );
 
         $this->assertEquals(

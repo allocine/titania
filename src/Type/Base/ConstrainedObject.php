@@ -306,20 +306,32 @@ abstract class ConstrainedObject extends BasicObject
         if ($this->hasAttribute($name)) {
             $classDefinition = $this->getAttributeClass($name);
 
-            if ($classDefinition &&
-                (! ($classDefinition->isNullable() === true) &&
-                is_null($value))
-            ) {
+            if ($classDefinition) {
+
                 $class = $classDefinition->getClass();
+
+                if (is_null($value)) {
+                    if (
+                        ($classDefinition->isNullable() === false) &&
+                        is_null($value)
+                    ) {
+                        throw new \Exception(sprintf(
+                            "Attribute attribute [%s] of constrained object [%s] can not be null",
+                            $name,
+                            $this->getClass()
+                        ));
+                    }
+                    else {
+                        return ($this->attribute[$name] = new $class());
+                    }
+                }
 
                 if (is_object($value)) {
                     if (
                         ($class === '\\' . get_class($value)) ||
                         ($class === get_class($value))
                     ) {
-                        return ($this->attribute[$name] = clone($value));
-                    } elseif (get_class($value) === 'stdClass') {
-                        return ($this->attribute[$name] = new $class($value));
+                        return ($this->attribute[$name] = $value);
                     } else {
                         throw new \Exception(sprintf(
                             "Invalid class [%s] for attribute [%s] of " .

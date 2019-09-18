@@ -17,7 +17,9 @@ class ExtendedConstrainedWithSubclass extends ConstrainedObject
     public static function getAttributeClassDefinition()
     {
         return [
-            'keyA' => new ClassDefinition([ 'class' => 'Tests\Titania\Fixtures\ConstrainedNoAlias' ])
+            'keyA' => new ClassDefinition([
+                'class' => 'Tests\Titania\Fixtures\ConstrainedNoAlias',
+            ])
         ];
     }
 }
