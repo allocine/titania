@@ -169,7 +169,7 @@ abstract class ConstrainedObject extends BasicObject
                     }
 
                     if (array_key_exists($k, $pcClassDefinition)) {
-                        $class = $pcClassDefinition[$k];
+                        $class = $pcClassDefinition[$k]->getClass();
 
                         $this->attributeDefault[$k] = new $class($v);
                         $this->attribute[$k] = clone($this->attributeDefault[$k]);
