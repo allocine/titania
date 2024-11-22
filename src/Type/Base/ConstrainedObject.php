@@ -11,6 +11,9 @@
 
 namespace Allocine\Titania\Type\Base;
 
+use Allocine\Titania\Type\Exception\InvalidAttributeException;
+use Allocine\Titania\Type\Exception\InvalidAttributeValueException;
+
 /**
  * Class AbstractConstrainedBasicObject
  *
@@ -23,6 +26,8 @@ namespace Allocine\Titania\Type\Base;
 
 abstract class ConstrainedObject extends BasicObject
 {
+    protected CONST THROW_ERROR_ON_UNKNOWN_ATTRIBUTE = true;
+
     /**
      * Has the init been done ?
      *
@@ -90,7 +95,7 @@ abstract class ConstrainedObject extends BasicObject
     /**
      * The class constructor
      *
-     * Generate the AbstractBasicObject object from an json string, an array or
+     * Generate the AbstractBasicObject object from a json string, an array or
      * an object.
      * Whatever the input, we try to construct the basic object
      *
@@ -108,12 +113,9 @@ abstract class ConstrainedObject extends BasicObject
 
         if (!get_parent_class($this)) {
             parent::__construct($data);
-        } else {
+        } elseif (!is_null($data)) {
             // Création de l'objet à partir des données
-
-            if (!is_null($data)) {
-                $this->setFromSomeData($data);
-            }
+            $this->setFromSomeData($data);
         }
     }
 
@@ -122,7 +124,7 @@ abstract class ConstrainedObject extends BasicObject
      *
      * @param string $name variable name
      *
-     * @return mixed
+     * @return bool
      */
     public function __isset($name)
     {
@@ -275,7 +277,7 @@ abstract class ConstrainedObject extends BasicObject
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return mixed|void
      */
 
     public function getAttribute($name)
@@ -286,8 +288,10 @@ abstract class ConstrainedObject extends BasicObject
 
         if ($this->hasAttribute($name)) {
             return $this->attribute[$name];
-        } else {
-            throw new \Exception(
+        }
+
+        if (static::THROW_ERROR_ON_UNKNOWN_ATTRIBUTE) {
+            throw new InvalidAttributeException(
                 "Invalid attribute [$name] for constrained object [" .
                 $this->getClass() .
                 "]."
@@ -303,7 +307,7 @@ abstract class ConstrainedObject extends BasicObject
      *
      * @throws \Exception
      *
-     * @return mixed
+     * @return mixed|void
      */
 
     public function setAttribute($name, $value)
@@ -321,19 +325,18 @@ abstract class ConstrainedObject extends BasicObject
 
                 if (is_null($value)) {
                     if ($classDefinition->isNullable() === false) {
-                        throw new \Exception(sprintf(
+                        throw new InvalidAttributeValueException(sprintf(
                             "Attribute attribute [%s] of constrained object [%s] can not be null",
                             $name,
                             $this->getClass()
                         ));
-                    } elseif (
-                        ($classDefinition->isNullable() === true) &&
-                        is_null($value)
-                    ) {
-                        return ($this->attribute[$name] = null);
-                    } else {
-                        return ($this->attribute[$name] = new $class());
                     }
+
+                    if ($classDefinition->isNullable() === true) {
+                        return ($this->attribute[$name] = null);
+                    }
+
+                    return ($this->attribute[$name] = new $class());
                 }
 
                 if (is_object($value)) {
@@ -345,11 +348,13 @@ abstract class ConstrainedObject extends BasicObject
                     } 
                 }
                 return ($this->attribute[$name] = new $class($value));
-            } else {
-                return ($this->attribute[$name] = $value);
             }
-        } else {
-            throw new \Exception(
+
+            return ($this->attribute[$name] = $value);
+        }
+
+        if (static::THROW_ERROR_ON_UNKNOWN_ATTRIBUTE) {
+            throw new InvalidAttributeException(
                 "Invalid attribute [$name] for constrained object [" .
                 $this->getClass() .
                 "]."
@@ -367,21 +372,25 @@ abstract class ConstrainedObject extends BasicObject
     }
 
     /**
-     * Return attributeAliasDefinition associated to an attribue or a string if there is only one
+     * Return attributeAliasDefinition associated to an attribute or a string if there is only one
      *
      * @param $name
      *
-     * @return array|string
+     * @return array|string|null
      */
 
     public function getAlias($name)
     {
         if (!$this->hasAttribute($name)) {
-            throw new \Exception(
-                "Invalid attribute [$name] for constrained object [" .
-                $this->getClass() .
-                "]."
-            );
+            if (static::THROW_ERROR_ON_UNKNOWN_ATTRIBUTE) {
+                throw new InvalidAttributeException(
+                    "Invalid attribute [$name] for constrained object [" .
+                    $this->getClass() .
+                    "]."
+                );
+            }
+
+            return null;
         }
 
         $r = [];
@@ -394,7 +403,9 @@ abstract class ConstrainedObject extends BasicObject
 
         if (count($r) === 1) {
             return $r[0];
-        } elseif (count($r) === 0) {
+        }
+
+        if (count($r) === 0) {
             return null;
         }
 
@@ -426,13 +437,13 @@ abstract class ConstrainedObject extends BasicObject
     {
         if ($this->isAlias($name)) {
             return $this->attributeAlias[$name];
-        } else {
-            throw new \Exception(
-                "Invalid attributeAlias [$name] for constrained object [" .
-                $this->getClass() .
-                "]."
-            );
         }
+
+        throw new InvalidAttributeException(
+            "Invalid attributeAlias [$name] for constrained object [" .
+            $this->getClass() .
+            "]."
+        );
     }
 
     /**
